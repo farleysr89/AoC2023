@@ -1,5 +1,4 @@
-﻿using System.Net.WebSockets;
-using System.Reflection.Metadata.Ecma335;
+﻿using System.Linq;
 
 namespace AdventOfCode;
 
@@ -17,7 +16,7 @@ public class Day03 : BaseDay
     public override ValueTask<string> Solve_1()
     {
         int sum = 0;
-        char [][] enginePlan = new char[_inputs.Length][];
+        char[][] enginePlan = new char[_inputs.Length][];
         var i = 0;
         foreach (var input in _inputs)
         {
@@ -27,21 +26,25 @@ public class Day03 : BaseDay
         i = 0;
         foreach (var input in enginePlan)
         {
-            for(var j = 0; j < enginePlan.Length; j++)
+            for (var j = 0; j < input.Length; j++)
             {
                 var num = "";
                 if (char.IsDigit(input[j]))
                 {
-                    var start = j;
+                    var start = j == 0 ? 0 : j - 1;
                     num += input[j];
                     j++;
-                    while (char.IsDigit(input[j]))
+                    while (j < input.Length && char.IsDigit(input[j]))
                     {
                         num += input[j];
                         j++;
                     }
-                    var end = j - 1;
+                    var end = j < input.Length - 1 ? j : input.Length - 1;
 
+                    if (CheckValid(start, end, i, enginePlan))
+                    {
+                        sum += int.Parse(num);
+                    }
                 }
             }
             i++;
@@ -50,43 +53,77 @@ public class Day03 : BaseDay
         return new($"Solution to {ClassPrefix} {CalculateIndex()}, part 1 is " + sum);
     }
 
-    public bool CheckValid(int start, int end, char[][] plan)
+    public bool CheckValid(int start, int end, int row, char[][] plan)
     {
+        int checkRow;
+        if (row > 0)
+        {
+            checkRow = row - 1;
+            for (var j = start; j <= end; j++)
+            {
+                if (plan[checkRow][j] != '.' && !char.IsDigit(plan[checkRow][j])) return true;
+            }
+        }
+        checkRow = row;
+        if (plan[checkRow][start] != '.' && !char.IsDigit(plan[checkRow][start])) return true;
+        if (plan[checkRow][end] != '.' && !char.IsDigit(plan[checkRow][end])) return true;
+        if (row < plan.Length)
+        {
+            checkRow = row + 1;
+            for (var j = start; j <= end; j++)
+            {
+                if (plan[checkRow][j] != '.' && !char.IsDigit(plan[checkRow][j])) return true;
+            }
+        }
         return false;
+    }
+
+    public bool CheckValidGear(int x, int y, char[][] plan)
+    {
+        int count = 0;
+        if(char.IsDigit(plan[x-1][y-1]))
+        {
+            count++;
+            if(char.IsDigit(plan[x-1][y]) && !char.IsDigit(plan[x-1][y])) count++;
+        }
+        return count > 1;
     }
 
     public override ValueTask<string> Solve_2()
     {
         int sum = 0;
+        char[][] enginePlan = new char[_inputs.Length][];
+        var i = 0;
         foreach (var input in _inputs)
         {
-            //var gameNum = int.Parse(input[input.IndexOf(' ')..input.IndexOf(':')]);
-            var draws = input[(input.IndexOf(": ") + 2)..].Split("; ");
-            //var impossible = false;
-            int redMin = 0, blueMin = 0, greenMin = 0;
-            foreach (var draw in draws)
+            enginePlan[i] = input.ToCharArray();
+            i++;
+        }
+        i = 0;
+        foreach (var input in enginePlan)
+        {
+            for (var j = 0; j < input.Length; j++)
             {
-                var colors = draw.Split(", ");
-                foreach(var color in colors)
+                var num = "";
+                if (char.IsDigit(input[j]))
                 {
-                    (int, string) splitColor = color.Split(' ') switch { var c => (int.Parse(c[0]), c[1])};
-                    if(splitColor.Item2 == "red" & splitColor.Item1 > redMin)
+                    var start = j == 0 ? 0 : j - 1;
+                    num += input[j];
+                    j++;
+                    while (j < input.Length && char.IsDigit(input[j]))
                     {
-                        redMin = splitColor.Item1;
+                        num += input[j];
+                        j++;
                     }
-                    if(splitColor.Item2 == "green" & splitColor.Item1 > greenMin)
+                    var end = j < input.Length - 1 ? j : input.Length - 1;
+
+                    if (CheckValid(start, end, i, enginePlan))
                     {
-                        greenMin = splitColor.Item1;
-                    }
-                    if(splitColor.Item2 == "blue" & splitColor.Item1 > blueMin)
-                    {
-                        blueMin = splitColor.Item1;
+                        sum += int.Parse(num);
                     }
                 }
-                //if(impossible) break;
             }
-            //if(!impossible) sum += gameNum;
-            sum += (redMin * greenMin * blueMin);
+            i++;
         }
 
         return new($"Solution to {ClassPrefix} {CalculateIndex()}, part 2 is " + sum);
