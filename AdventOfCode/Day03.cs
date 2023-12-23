@@ -1,4 +1,5 @@
 ﻿using System.Linq;
+using System.Net.WebSockets;
 
 namespace AdventOfCode;
 
@@ -78,15 +79,44 @@ public class Day03 : BaseDay
         return false;
     }
 
-    public bool CheckValidGear(int x, int y, char[][] plan)
+    public List<(int, int)> CheckValidGear(int x, int y, char[][] plan)
     {
-        int count = 0;
-        if(char.IsDigit(plan[x-1][y-1]))
+        List<(int, int)> indices = [];
+        if (char.IsDigit(plan[y - 1][x - 1]))
         {
-            count++;
-            if(char.IsDigit(plan[x-1][y]) && !char.IsDigit(plan[x-1][y])) count++;
+            indices.Add((y - 1, x - 1));
+            if (!char.IsDigit(plan[y - 1][x]) && char.IsDigit(plan[y - 1][x + 1])) indices.Add((y - 1, x + 1));
         }
-        return count > 1;
+        else if (char.IsDigit(plan[y - 1][x]))
+        {
+            indices.Add((y - 1, x));
+        }
+        else if (char.IsDigit(plan[y - 1][x + 1]))
+        {
+            indices.Add((y - 1, x + 1));
+        }
+        if (char.IsDigit(plan[y][x - 1]))
+        {
+            indices.Add((y, x - 1));
+        }
+        if (char.IsDigit(plan[y][x + 1]))
+        {
+            indices.Add((y, x + 1));
+        }
+        if (char.IsDigit(plan[y + 1][x - 1]))
+        {
+            indices.Add((y + 1, x - 1));
+            if (!char.IsDigit(plan[y + 1][x]) && char.IsDigit(plan[y + 1][x + 1])) indices.Add((y + 1, x + 1));
+        }
+        else if (char.IsDigit(plan[y + 1][x]))
+        {
+            indices.Add((y + 1, x));
+        }
+        else if (char.IsDigit(plan[y + 1][x + 1]))
+        {
+            indices.Add((y + 1, x + 1));
+        }
+        return indices.Count > 1 ? indices : null;
     }
 
     public override ValueTask<string> Solve_2()
@@ -104,23 +134,46 @@ public class Day03 : BaseDay
         {
             for (var j = 0; j < input.Length; j++)
             {
-                var num = "";
-                if (char.IsDigit(input[j]))
+                if (input[j] == '*')
                 {
-                    var start = j == 0 ? 0 : j - 1;
-                    num += input[j];
-                    j++;
-                    while (j < input.Length && char.IsDigit(input[j]))
+                    var indicies = CheckValidGear(j, i, enginePlan);
+                    if (indicies == null) continue;
+                    if (indicies.Count > 2) Console.WriteLine("Something Broke!");
+                    if (indicies.Count < 2) continue;
+                    var product = 1;
+                    foreach (var index in indicies)
                     {
-                        num += input[j];
-                        j++;
+                        var num = "";
+                        var x = index.Item2;
+                        var y = index.Item1;
+                        num += enginePlan[y][x];
+                        for (int xx = x - 1; xx >= 0; xx--)
+                        {
+                            if (char.IsDigit(enginePlan[y][xx])) num = enginePlan[y][xx] + num;
+                            else break;
+                        }
+                        for (int xx = x + 1; xx < enginePlan[y].Length; xx++)
+                        {
+                            if (char.IsDigit(enginePlan[y][xx])) num += enginePlan[y][xx];
+                            else break;
+                        }
+                        product *= int.Parse(num);
                     }
-                    var end = j < input.Length - 1 ? j : input.Length - 1;
+                    sum += product;
+                    //var start = j == 0 ? 0 : j - 1;
+                    //num += input[j];
+                    //j++;
+                    //while (j < input.Length && char.IsDigit(input[j]))
+                    //{
+                    //    num += input[j];
+                    //    j++;
+                    //}
+                    //var end = j < input.Length - 1 ? j : input.Length - 1;
 
-                    if (CheckValid(start, end, i, enginePlan))
-                    {
-                        sum += int.Parse(num);
-                    }
+                    //if (CheckValid(start, end, i, enginePlan))
+                    //{
+                    //    sum += int.Parse(num);
+                    //}
                 }
             }
             i++;
