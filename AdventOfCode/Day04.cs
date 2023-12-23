@@ -1,8 +1,4 @@
-﻿using System.Linq;
-using System.Net.WebSockets;
-using System.Xml.Linq;
-
-namespace AdventOfCode;
+﻿namespace AdventOfCode;
 
 public class Day04 : BaseDay
 {

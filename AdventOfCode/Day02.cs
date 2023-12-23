@@ -1,7 +1,4 @@
-﻿using System.Net.WebSockets;
-using System.Reflection.Metadata.Ecma335;
-
-namespace AdventOfCode;
+﻿namespace AdventOfCode;
 
 public class Day02 : BaseDay
 {
