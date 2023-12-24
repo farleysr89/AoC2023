@@ -1,7 +1,4 @@
-﻿using System.Net.Mail;
-using System.Net.WebSockets;
-
-namespace AdventOfCode;
+﻿namespace AdventOfCode;
 
 public class Day06 : BaseDay
 {

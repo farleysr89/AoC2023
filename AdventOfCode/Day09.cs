@@ -1,9 +1,4 @@
-﻿using System.Net.Mail;
-using System.Net.WebSockets;
-using System.Reflection.Metadata.Ecma335;
-using System.Xml.Linq;
-
-namespace AdventOfCode;
+﻿namespace AdventOfCode;
 
 public class Day09 : BaseDay
 {
@@ -28,7 +23,7 @@ public class Day09 : BaseDay
             var prev = 0;
             while (true)
             {
-                List<int> differences = new List<int>();
+                List<int> differences = [];
                 foreach (var i in currentList)
                 {
                     if (first)
@@ -77,7 +72,7 @@ public class Day09 : BaseDay
             var prev = 0;
             while (true)
             {
-                List<int> differences = new List<int>();
+                List<int> differences = [];
                 foreach (var i in currentList)
                 {
                     if (first)

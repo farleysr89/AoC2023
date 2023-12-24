@@ -1,9 +1,4 @@
-﻿using System.Net.Mail;
-using System.Net.WebSockets;
-using System.Reflection.Metadata.Ecma335;
-using System.Xml.Linq;
-
-namespace AdventOfCode;
+﻿namespace AdventOfCode;
 
 public class Day08 : BaseDay
 {
@@ -20,7 +15,7 @@ public class Day08 : BaseDay
     public override ValueTask<string> Solve_1()
     {
         var directions = _inputs[0];
-        Dictionary<string, (string, string)> nodes = new Dictionary<string, (string, string)>();
+        Dictionary<string, (string, string)> nodes = [];
         foreach (var input in _inputs[2..])
         {
             var line = input.Split(" = ");
@@ -51,8 +46,8 @@ public class Day08 : BaseDay
     public override ValueTask<string> Solve_2()
     {
         var directions = _inputs[0];
-        Dictionary<string, (string, string)> nodes = new Dictionary<string, (string, string)>();
-        List<(string, ((string, string), int))> ghosts = new List<(string, ((string, string), int))>();
+        Dictionary<string, (string, string)> nodes = [];
+        List<(string, ((string, string), int))> ghosts = [];
         var num = 0;
         foreach (var input in _inputs[2..])
         {
@@ -69,7 +64,7 @@ public class Day08 : BaseDay
         //var nodeKey = "AAA";
         while (ghosts.Any(g => !g.Item1.EndsWith('Z')))
         {
-            List<(string, ((string, string),int))> newGhosts = new List<(string, ((string, string),int))>();
+            List<(string, ((string, string),int))> newGhosts = [];
             counter++;
             //if(counter == 6) Console.WriteLine("HERE");
             foreach (var ghost in ghosts)

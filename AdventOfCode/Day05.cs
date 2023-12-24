@@ -1,7 +1,4 @@
-﻿using System.Net.Mail;
-using System.Net.WebSockets;
-
-namespace AdventOfCode;
+﻿namespace AdventOfCode;
 
 public class Day05 : BaseDay
 {
@@ -30,7 +27,7 @@ public class Day05 : BaseDay
             {
                 maps[mapCount] = map;
                 mapCount++;
-                map = new List<(ulong, ulong, ulong)>();
+                map = [];
                 continue;
             }
             if (!char.IsDigit(line[0])) continue;
@@ -85,7 +82,7 @@ public class Day05 : BaseDay
             {
                 maps[mapCount] = map;
                 mapCount++;
-                map = new List<(ulong, ulong, ulong)>();
+                map = [];
                 continue;
             }
             if (!char.IsDigit(line[0])) continue;
